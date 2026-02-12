@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Rede Barra Life Drogaria</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.4;
+        }
+        
+        .container {
+            max-width: 100%;
+            padding: 10px;
+            position: relative;
+        }
+        
+        header {
+            background-color: #0056b3;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .min-order {
+            background-color: #ffc107;
+            color: #212529;
+            padding: 8px;
+            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .total-display {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 12px 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-weight: bold;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .total-values {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        
+        .total-bruto {
+            color: #6c757d;
+            text-decoration: line-through;
+            font-size: 0.9rem;
+        }
+        
+        .total-liquido {
+            color: #dc3545;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .product-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: flex-start;
+            padding: 8px;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .product-image-container {
+            width: 100px;
+            height: 100px;
+            flex-shrink: 0;
+            margin-right: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .product-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 3px;
+        }
+        
+        .product-main-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 5px;
+            gap: 10px;
+        }
+        
+        .product-title-container {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .product-title {
+            font-size: 0.95rem;
+            color: #0056b3;
+            margin-right: 5px;
+        }
+        
+        .detail-box {
+            background: #f1f8ff;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: #333;
+            white-space: nowrap;
+        }
+        
+        .product-category {
+            background: #e6f7ed;
+            color: #28a745;
+        }
+        
+        .product-brand {
+            background: #fde8e8;
+            color: #dc3545;
+        }
+        
+        .product-code {
+            background: #f0f0f0;
+            color: #666;
+        }
+        
+        .price-controls-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .price-section {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            text-align: right;
+            min-width: 100px;
+        }
+        
+        .original-price {
+            text-decoration: line-through;
+            color: #6c757d;
+            font-size: 0.8rem;
+        }
+        
+        .current-price {
+            font-weight: bold;
+            color: #dc3545;
+            font-size: 1rem;
+        }
+        
+        .product-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .quantity-control {
+            display: flex;
+            align-items: center;
+        }
+        
+        .quantity-btn {
+            width: 25px;
+            height: 25px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .quantity-input {
+            width: 40px;
+            height: 25px;
+            text-align: center;
+            margin: 0 4px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 0.9rem;
+        }
+        
+        .checkout-section {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            position: sticky;
+            bottom: 15px;
+        }
+        
+        .whatsapp-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: #25D366;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1rem;
+            box-shadow: 0 1px 5px rgba(37, 211, 102, 0.3);
+            transition: all 0.3s;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .whatsapp-btn:hover {
+            background-color: #128C7E;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(37, 211, 102, 0.4);
+        }
+        
+        .whatsapp-btn svg {
+            width: 20px;
+            height: 20px;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .whatsapp-btn svg {
+                width: 24px;
+                height: 24px;
+            }
+            
+            .total-display {
+                position: static;
+                margin-bottom: 10px;
+                text-align: center;
+                flex-direction: column;
+                gap: 5px;
+                padding: 10px;
+            }
+            
+            .product-card {
+                flex-direction: column;
+            }
+            
+            .product-image-container {
+                width: 100%;
+                height: auto;
+                margin-right: 0;
+                margin-bottom: 8px;
+            }
+            
+            .product-header {
+                flex-direction: column;
+            }
+            
+            .price-controls-container {
+                width: 100%;
+                justify-content: space-between;
+                margin-top: 10px;
+            }
+            
+            .product-controls {
+                align-items: flex-end;
+            }
+        }
+        
+        .payment-selection {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .payment-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .payment-option input {
+            margin: 0;
+        }
+        
+        .payment-option label {
+            font-size: 0.9rem;
+        }
+        
+        .contact-info {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 0.9rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            color: #666;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>NOVA REDE BARRA LIFE DROGARIA</h1>
+            <p class="subtitle">Medicamentos: LIPOASPIRAÇÃO do Dr. Eduardo Faria</p>
+            <div class="total-display" id="total-price">
+                <div class="total-values">
+                    <div class="total-bruto">Bruto: R$ 0,00</div>
+                    <div class="total-liquido">Líquido: R$ 0,00</div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="min-order">
+            Você efetuará o pagamento,deixaremos reservado, embalado com a nota fiscal, um dia antes da cirurgia, deixaremos no Hospital. Na entrada no dia da cirurgia, você retirará na recepçao e nao se preocupará com os medicamentos.
+        </div>
+        
+        <div class="product-list" id="catalog">
+            <!-- Produto 1 - CEFALEXINA -->
+            <div class="product-card">
+                <div class="product-image-container">
+                    <img src="./imagem/cefalexina.jpg" alt="Cefalexina 500mg" class="product-image" onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#666;font-size:0.7rem\'>Imagem não encontrada</div>'">
+                </div>
+                <div class="product-main-info">
+                    <div class="product-header">
+                        <div class="product-title-container">
+                            <h3 class="product-title">CEFALEXINA 500MG C/ 30 CP</h3>
+                            <span class="detail-box product-category">ANTIBIÓTICO</span>
+                            <span class="detail-box product-brand">GENÉRICO</span>
+                            <span class="detail-box product-code">Marca autorizada</span>
+                        </div>
+                        <div class="price-controls-container">
+                            <div class="price-section">
+                                <div class="original-price">R$ 102,45</div>
+                                <div class="current-price">R$ 47,97</div>
+                            </div>
+                            <div class="product-controls">
+                                <div class="quantity-control">
+                                    <button class="quantity-btn minus">-</button>
+                                    <input type="number" value="1" min="0" class="quantity-input">
+                                    <button class="quantity-btn plus">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+	    <!-- Produto 2 - DIPIRONA -->
+            <div class="product-card">
+                <div class="product-image-container">
+                    <img src="./imagem/dipirona.jpg" alt="Dipirona 1G" class="product-image" onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#666;font-size:0.7rem\'>Imagem não encontrada</div>'">
+                </div>
+                <div class="product-main-info">
+                    <div class="product-header">
+                        <div class="product-title-container">
+                            <h3 class="product-title">DIPIRONA 1G C20 CP</h3>
+                            <span class="detail-box product-category">ANALGÉSICO</span>
+                            <span class="detail-box product-brand">GENERICO</span>
+                            <span class="detail-box product-code">MARCA CONFIAVEL</span>
+                            <span class="detail-box" style="background: #fff3cd; color: #856404;">PROMO:ESPECIAL </span>
+                        </div>
+                        <div class="price-controls-container">
+                            <div class="price-section">
+                                <div class="original-price">R$ 37,92</div>
+                                <div class="current-price">R$ 19,99</div>
+                            </div>
+                            <div class="product-controls">
+                                <div class="quantity-control">
+                                    <button class="quantity-btn minus">-</button>
+                                    <input type="number" value="1" min="0" class="quantity-input">
+                                    <button class="quantity-btn plus">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Produto 3 - VÓRIC -->
+            <div class="product-card">
+                <div class="product-image-container">
+                    <img src="./imagem/voric.jpg" alt="Vóric 10mg" class="product-image" onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#666;font-size:0.7rem\'>Imagem não encontrada</div>'">
+                </div>
+                <div class="product-main-info">
+                    <div class="product-header">
+                        <div class="product-title-container">
+                            <h3 class="product-title">VÓRIC 10MG C/ 20 COMP</h3>
+                            <span class="detail-box product-category">ANTI-INFLAMATÓRIO</span>
+                            <span class="detail-box product-brand">ORIGINAL</span>
+                            <span class="detail-box product-code">LAB EUROFARMA - MARCA CONFIAVEL</span>
+                        </div>
+                        <div class="price-controls-container">
+                            <div class="price-section">
+                                <div class="original-price">R$ 73,39</div>
+                                <div class="current-price">R$ 68,25</div>
+                            </div>
+                            <div class="product-controls">
+                                <div class="quantity-control">
+                                    <button class="quantity-btn minus">-</button>
+                                    <input type="number" value="1" min="0" class="quantity-input">
+                                    <button class="quantity-btn plus">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Produto 4 - VERSA -->
+            <div class="product-card">
+                <div class="product-image-container">
+                    <img src="./imagem/versa.jpg" alt="Versa 40mg" class="product-image" onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#666;font-size:0.7rem\'>Imagem não encontrada</div>'">
+                </div>
+                <div class="product-main-info">
+                    <div class="product-header">
+                        <div class="product-title-container">
+                            <h3 class="product-title">VERSA 40MG</h3>
+                            <span class="detail-box product-category">INJETÁVEL</span>
+                            <span class="detail-box product-brand">ORIGINAL</span>
+                            <span class="detail-box product-code">LAB EUROFARMA - MARCA CONFIAVEL</span>
+                            <span class="detail-box" style="background: #fff3cd; color: #856404;">PROMO: Compre 6  + 4 seringas de brinde</span>
+                        </div>
+                        <div class="price-controls-container">
+                            <div class="price-section">
+                                <div class="original-price">R$ 891,65</div>
+                                <div class="current-price">R$ 534,99</div>
+                            </div>
+                            <div class="product-controls">
+                                <div class="quantity-control">
+                                    <button class="quantity-btn minus">-</button>
+                                    <input type="number" value="1" min="0" class="quantity-input">
+                                    <button class="quantity-btn plus">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+	     <!-- Produto 5 - ÉSIO -->
+            <div class="product-card">
+                <div class="product-image-container">
+                    <img src="./imagem/esio.jpg" alt="Ésio 20mg" class="product-image" onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#666;font-size:0.7rem\'>Imagem não encontrada</div>'">
+                </div>
+                <div class="product-main-info">
+                    <div class="product-header">
+                        <div class="product-title-container">
+                            <h3 class="product-title">ÉSIO 20MG C/ 28 CAPS</h3>
+                            <span class="detail-box product-category">ANTIÁCIDO</span>
+                            <span class="detail-box product-brand">ORIGINAL</span>
+                            <span class="detail-box product-code">LAB EUROFARMA - MARCA CONFIAVEL</span>
+                        </div>
+                        <div class="price-controls-container">
+                            <div class="price-section">
+                                <div class="original-price">R$ 102,41</div>
+                                <div class="current-price">R$ 92,17</div>
+                            </div>
+                            <div class="product-controls">
+                                <div class="quantity-control">
+                                    <button class="quantity-btn minus">-</button>
+                                    <input type="number" value="1" min="0" class="quantity-input">
+                                    <button class="quantity-btn plus">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Produto 6 - CEBION -->
+            <div class="product-card">
+                <div class="product-image-container">
+                    <img src="./imagem/cebion.jpg" alt="Cebion 1g" class="product-image" onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#666;font-size:0.7rem\'>Imagem não encontrada</div>'">
+                </div>
+                <div class="product-main-info">
+                    <div class="product-header">
+                        <div class="product-title-container">
+                            <h3 class="product-title">CEBION 1g C10 CP</h3>
+                            <span class="detail-box product-category">SUPLEMENTO</span>
+                            <span class="detail-box product-brand">ORIGINAL</span>
+                            <span class="detail-box product-code">REFERENCIA MARCA CONFIAVEL</span>
+                        </div>
+                        <div class="price-controls-container">
+                            <div class="price-section">
+                                <div class="original-price">R$ 22,53</div>
+                                <div class="current-price">R$ 19,95</div>
+                            </div>
+                            <div class="product-controls">
+                                <div class="quantity-control">
+                                    <button class="quantity-btn minus">-</button>
+                                    <input type="number" value="1" min="0" class="quantity-input">
+                                    <button class="quantity-btn plus">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Produto 7 - Gesico -->
+            <div class="product-card">
+                <div class="product-image-container">
+                    <img src="./imagem/paco.jpg" alt="Gesico retard" class="product-image" onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#666;font-size:0.7rem\'>Imagem não encontrada</div>'">
+                </div>
+                <div class="product-main-info">
+                    <div class="product-header">
+                        <div class="product-title-container">
+                            <h3 class="product-title">GESICO RETARD 100MG C10CP</h3>
+                            <span class="detail-box product-category">ANALGÉSICO</span>
+                            <span class="detail-box product-brand">ORIGINAL</span>
+                            <span class="detail-box product-code">CONTROLE ESPECIAL - LAB EUROFARMA - MARCA CONFIAVEL</span>
+                        </div>
+                        <div class="price-controls-container">
+                            <div class="price-section">
+                                <div class="original-price">R$ 106,49</div>
+                                <div class="current-price">R$ 95,84</div>
+                            </div>
+                            <div class="product-controls">
+                                <div class="quantity-control">
+                                    <button class="quantity-btn minus">-</button>
+                                    <input type="number" value="1" min="0" class="quantity-input">
+                                    <button class="quantity-btn plus">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Produto 8 - TAMARINE -->
+            <div class="product-card">
+                <div class="product-image-container">
+                    <img src="./imagem/tamarine.jpg" alt="Tamarine" class="product-image" onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#666;font-size:0.7rem\'>Imagem não encontrada</div>'">
+                </div>
+                <div class="product-main-info">
+                    <div class="product-header">
+                        <div class="product-title-container">
+                            <h3 class="product-title">TAMARINE 12MG C/20 CAPS</h3>
+                            <span class="detail-box product-category">LAXANTE</span>
+                            <span class="detail-box product-brand">ORIGINAL</span>
+                            <span class="detail-box product-code">HYPERA - MARCA CONFIAVEL</span>
+                        </div>
+                        <div class="price-controls-container">
+                            <div class="price-section">
+                                <div class="original-price">R$ 105,80</div>
+                                <div class="current-price">R$ 85,50</div>
+                            </div>
+                            <div class="product-controls">
+                                <div class="quantity-control">
+                                    <button class="quantity-btn minus">-</button>
+                                    <input type="number" value="1" min="0" class="quantity-input">
+                                    <button class="quantity-btn plus">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Produto 9 - LUFTAL -->
+            <div class="product-card">
+                <div class="product-image-container">
+                    <img src="./imagem/luftal.jpg" alt="luftal" class="product-image" onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#666;font-size:0.7rem\'>Imagem não encontrada</div>'">
+                </div>
+                <div class="product-main-info">
+                    <div class="product-header">
+                        <div class="product-title-container">
+                            <h3 class="product-title">luftal gel c10cp</h3>
+                            <span class="detail-box product-category">ANTIGASES</span>
+                            <span class="detail-box product-brand">ORIGINAL</span>
+                            <span class="detail-box product-code">MARCA CONFIAVEL</span>
+                            <span class="detail-box" style="background: #fff3cd; color: #856404;">PROMO: Compre 60 + 30 comp de brinde</span>
+                        </div>
+                        <div class="price-controls-container">
+                            <div class="price-section">
+                                <div class="original-price">R$ 39,77</div>
+                                <div class="current-price">R$ 35,79</div>
+                            </div>
+                            <div class="product-controls">
+                                <div class="quantity-control">
+                                    <button class="quantity-btn minus">-</button>
+                                    <input type="number" value="1" min="0" class="quantity-input">
+                                    <button class="quantity-btn plus">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Produto 10 - VONAU -->
+            <div class="product-card">
+                <div class="product-image-container">
+                    <img src="./imagem/vonau8mgc10.jpg" alt="Vonau 4mg" class="product-image" onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#666;font-size:0.7rem\'>Imagem não encontrada</div>'">
+                </div>
+                <div class="product-main-info">
+                    <div class="product-header">
+                        <div class="product-title-container">
+                            <h3 class="product-title">VONAU 8MG C/ 10 COMP</h3>
+                            <span class="detail-box product-category">ANTIEMÉTICO</span>
+                            <span class="detail-box product-brand">ORIGINAL</span>
+                            <span class="detail-box product-code">REFERENCIA MARCA CONFIAVEL</span>
+                        </div>
+                        <div class="price-controls-container">
+                            <div class="price-section">
+                                <div class="original-price">R$ 102,37</div>
+                                <div class="current-price">R$ 92,13</div>
+                            </div>
+                            <div class="product-controls">
+                                <div class="quantity-control">
+                                    <button class="quantity-btn minus">-</button>
+                                    <input type="number" value="1" min="0" class="quantity-input">
+                                    <button class="quantity-btn plus">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="payment-selection">
+            <p><strong>Forma de pagamento:</strong></p>
+            <div class="payment-options">
+                <div class="payment-option">
+                    <input type="radio" id="pix" name="payment" value="PIX">
+                    <label for="pix">PIX</label>
+                </div>
+                <div class="payment-option">
+                    <input type="radio" id="credit" name="payment" value="Cartão de Crédito">
+                    <label for="credit">Cartão de Crédito</label>
+                </div>
+                <div class="payment-option">
+                    <input type="radio" id="none" name="payment" value="" checked>
+                    <label for="none">Ainda não sei</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="contact-info">
+            <p>Entre em contato pelo WhatsApp: <strong>+55 21 97437-7551</strong></p>
+        </div>
+        
+        <div class="checkout-section">
+            <a href="https://wa.me/5521974377551" class="whatsapp-btn" target="_blank">
+                <svg viewBox="0 0 32 32" width="20" height="20" fill="currentColor">
+                    <path d="M19.11 17.205c-.372 0-1.088 1.39-1.518 1.39a.63.63 0 0 1-.315-.1c-.802-.402-1.504-.817-2.163-1.447-.545-.516-1.146-1.29-1.46-1.963a.426.426 0 0 1-.073-.215c0-.33.99-.945.99-1.49 0-.143-.73-2.09-.832-2.335-.143-.372-.214-.487-.6-.487-.187 0-.36-.043-.53-.043-.302 0-.53.115-.746.315-.688.645-1.032 1.318-1.06 2.264v.114c-.015.99.472 1.977 1.017 2.78 1.23 1.82 2.506 3.41 4.554 4.34.616.287 2.035.888 2.722.888.817 0 2.15-.515 2.478-1.318.13-.33.244-.73.244-1.088 0-.058 0-.144-.03-.215-.1-.172-2.434-1.39-2.678-1.39zm-2.908 7.593c-1.747 0-3.48-.53-4.942-1.49L7.793 24.41l1.132-3.337a8.955 8.955 0 0 1-1.72-5.272c0-4.955 4.04-8.995 8.997-8.995S25.2 10.845 25.2 15.8c0 4.958-4.04 8.998-8.998 8.998zm0-19.798c-5.96 0-10.8 4.842-10.8 10.8 0 1.964.53 3.898 1.546 5.574L5 27.176l5.974-1.92a10.807 10.807 0 0 0 16.03-9.455c0-5.958-4.842-10.8-10.802-10.8z"/>
+                </svg>
+                Finalizar Pedido pelo WhatsApp
+            </a>
+        </div>
+        
+        <footer>
+            NOVA REDE BARRA LIFE DROGARIA © 2025 | Todos os direitos reservados em quanto durarem os estoques
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Função para formatar valor monetário
+            function formatMoney(value) {
+                return 'R$ ' + value.toFixed(2).replace('.', ',');
+            }
+
+            // Função para extrair valor numérico do texto do preço
+            function extractPrice(priceText) {
+                return parseFloat(priceText.replace(/[^\d,]/g, '').replace(',', '.'));
+            }
+
+            // Controles de quantidade
+            document.querySelectorAll('.quantity-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const input = this.parentElement.querySelector('.quantity-input');
+                    let value = parseInt(input.value);
+                    
+                    if (this.classList.contains('minus')) {
+                        value = value > 0 ? value - 1 : 0;
+                    } else if (this.classList.contains('plus')) {
+                        value = value + 1;
+                    }
+                    
+                    input.value = value;
+                    updateTotal();
+                });
+            });
+            
+            // Atualizar total quando a quantidade é alterada manualmente
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                input.addEventListener('change', function() {
+                    let value = parseInt(this.value);
+                    if (isNaN(value) || value < 0) this.value = 0;
+                    updateTotal();
+                });
+            });
+            
+            // Função para atualizar o total
+            function updateTotal() {
+                let totalBruto = 0;
+                let totalLiquido = 0;
+                let whatsappMessage = "Olá, Meu médico é o Dr Eduardo Faria, minha lista é para Lipoaspiraçao. Gostaria de fazer um pedido! 21974377551\n\n*Detalhes do Pedido:*\n";
+                let hasItems = false;
+                
+                document.querySelectorAll('.product-card').forEach(card => {
+                    const quantity = parseInt(card.querySelector('.quantity-input').value);
+                    const productTitle = card.querySelector('.product-title').textContent;
+                    const priceText = card.querySelector('.current-price').textContent;
+                    const price = extractPrice(priceText);
+                    const originalPriceEl = card.querySelector('.original-price');
+                    let originalPrice = price;
+                    
+                    if (originalPriceEl) {
+                        originalPrice = extractPrice(originalPriceEl.textContent);
+                    }
+                    
+                    if (quantity > 0) {
+                        const itemBruto = originalPrice * quantity;
+                        const itemLiquido = price * quantity;
+                        
+                        totalBruto += itemBruto;
+                        totalLiquido += itemLiquido;
+                        
+                        whatsappMessage += `\n*${productTitle} (Qtd: ${quantity})*\n`;
+                        whatsappMessage += `- Valor Bruto: ${formatMoney(itemBruto)}\n`;
+                        whatsappMessage += `- Valor Líquido: ${formatMoney(itemLiquido)}\n`;
+                        
+                        hasItems = true;
+                    }
+                });
+                
+                document.querySelector('.total-bruto').textContent = `Bruto: ${formatMoney(totalBruto)}`;
+                document.querySelector('.total-liquido').textContent = `Líquido: ${formatMoney(totalLiquido)}`;
+                
+                const whatsappBtn = document.querySelector('.whatsapp-btn');
+                if (hasItems) {
+                    whatsappMessage += `\n*Totais:*\n`;
+                    whatsappMessage += `- Total Bruto: ${formatMoney(totalBruto)}\n`;
+                    whatsappMessage += `- Total Líquido: ${formatMoney(totalLiquido)}\n`;
+                    
+                    // Adiciona a forma de pagamento selecionada
+                    const selectedPayment = document.querySelector('input[name="payment"]:checked').value;
+                    if (selectedPayment) {
+                        whatsappMessage += `\n*Forma de pagamento:* ${selectedPayment}`;
+                    }
+                    
+                    // Codifica a mensagem corretamente para o WhatsApp
+                    const encodedMessage = encodeURIComponent(whatsappMessage)
+                        .replace(/%2F/g, '/')
+                        .replace(/%2D/g, '-')
+                        .replace(/%28/g, '(')
+                        .replace(/%29/g, ')')
+                        .replace(/%3A/g, ':')
+                        .replace(/%20/g, ' ')
+                        .replace(/%2A/g, '*')
+                        .replace(/%0A/g, '%0A'); // Mantém as quebras de linha
+                    
+                    whatsappBtn.href = `https://wa.me/5521974377551?text=${encodedMessage}`;
+                } else {
+                    whatsappBtn.href = 'https://wa.me/5521974377551';
+                }
+            }
+            
+            // Chamada inicial para calcular o total quando a página carrega
+            updateTotal();
+            
+            // Verificador de imagens
+            const images = document.querySelectorAll('.product-image');
+            images.forEach(img => {
+                img.onerror = function() {
+                    this.parentElement.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#666;font-size:0.7rem">Imagem não encontrada</div>';
+                };
+            });
+
+            // Atualizar quando a forma de pagamento mudar
+            document.querySelectorAll('input[name="payment"]').forEach(radio => {
+                radio.addEventListener('change', updateTotal);
+            });
+        });
+    </script>
+</body>
+</html>
